@@ -5,52 +5,26 @@ import (
 	"reflect"
 )
 
-func rotate(matrix [][]int) {
-	l := len(matrix)
-
-	type coordinateType struct {
-		r int
-		c int
-	}
-	rotatedCells := make(map[coordinateType]bool)
-
-	calcNextCoord := func(coord coordinateType) coordinateType {
-		return coordinateType{l - coord.r, coord.c}
-	}
-
-	rotateCell := func(coord coordinateType) {
-		nextCoord := calcNextCoord(coord)
-		curCellValue := matrix[coord.r][coord.c]
-		for {
-			if _, ok := rotatedCells[nextCoord]; ok {
-				break
-			}
-			saveCell := matrix[nextCoord.r][nextCoord.c]
-			matrix[nextCoord.r][nextCoord.c] = curCellValue
-			rotatedCells[nextCoord] = true
-			nextCoord = calcNextCoord(nextCoord)
-			curCellValue = saveCell
-		}
-	}
-
-	for i := 0; i < l-1; i++ {
-		for j := 0; j < l-1; j++ {
-			if _, ok := rotatedCells[coordinateType{i, j}]; !ok {
-				rotateCell(coordinateType{i, j})
-			}
-		}
-	}
-}
-
 func main() {
 
-	image := [][]int{
+	image := Matrix{
 		{1, 2, 3},
 		{4, 5, 6},
 		{7, 8, 9},
 	}
-	rotate(image)
-	fmt.Println(reflect.DeepEqual(image, [][]int{
+
+	for i := 0; i < len(image); i++ {
+		for j := 0; j < len(image[i]); j++ {
+			fmt.Printf("%v -> %v\n",
+				coordinateType{i, j},
+				image.calcNextCoord(coordinateType{i, j}))
+		}
+	}
+
+	fmt.Println(image)
+	Rotate(image)
+	fmt.Println(image)
+	fmt.Println(reflect.DeepEqual(image, Matrix{
 		{7, 4, 1},
 		{8, 5, 2},
 		{9, 6, 3},
@@ -62,8 +36,10 @@ func main() {
 		{13, 3, 6, 7},
 		{15, 14, 12, 16},
 	}
-	rotate(image)
-	fmt.Println(reflect.DeepEqual(image, [][]int{
+	fmt.Println(image)
+	Rotate(image)
+	fmt.Println(image)
+	fmt.Println(reflect.DeepEqual(image, Matrix{
 		{15, 13, 2, 5},
 		{14, 3, 4, 1},
 		{12, 6, 8, 9},
@@ -73,13 +49,13 @@ func main() {
 	image = [][]int{
 		{1},
 	}
-	rotate(image)
-	fmt.Println(reflect.DeepEqual(image, [][]int{
+	Rotate(image)
+	fmt.Println(reflect.DeepEqual(image, Matrix{
 		{1},
 	}))
 
 	image = [][]int{{1, 2}, {3, 4}}
-	rotate(image)
-	fmt.Println(reflect.DeepEqual(image, [][]int{{3, 1}, {4, 2}}))
+	Rotate(image)
+	fmt.Println(reflect.DeepEqual(image, Matrix{{3, 1}, {4, 2}}))
 
 }
